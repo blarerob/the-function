@@ -1,26 +1,60 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
+@plugin "daisyui";
 
 :root {
-  --background: #ffffff;
+  --background: #ffffff; /* Light mode background */
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #171717; /* Dark mode background */
     --foreground: #ededed;
   }
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom styles */
+.btn:hover {
+  cursor: pointer;
+}
+
+.btn-sign-up-sign-in {
+  background-color: #4B0000; /* Dark maroon background color */
+  color: #ffffff; /* Text color */
+  border: 1px solid #4B0000; /* Border color */
+  padding: 10px 20px; /* Padding */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer;
+}
+
+.btn-jtown {
+  background-color: #4B0000; /* Maroon background color */
+  color: #ffffff; /* Text color */
+  border: 1px solid #4B0000; /* Border color */
+  padding: 10px 20px; /* Padding */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.h1-bold-custom {
+  font-family: 'Sharp', FontAwesome, ui-serif;
+  font-size: 3.5rem; /* Adjust size as needed */
+  font-variant-east-asian: normal;
+}
+
+.p-regular-20, .p-regular-24 {
+  font-family: 'Sharp', FontAwesome, ui-serif;
+}
+
+
+
+/* Tailwind styles */
+@layer utilities {
+  .wrapper {
+    @apply max-w-7xl lg:mx-auto p-5 md:px-10 xl:px-0 w-full;
+  }
 }
