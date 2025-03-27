@@ -57,13 +57,15 @@ const Header = () => {
                             <MobileNav />
                         </SignedIn>
                     </div>
-                     <div className="btn btn-sign-up-sign-in flex justify-center items-center p-4 gap-4">
                         <SignedOut>
+                            <div className="btn btn-sign-up-sign-in flex justify-center items-center p-4 gap-4">
+
                             <Link href='/sign-up' >
                                Login
                             </Link>
-                        </SignedOut>
                      </div>
+                        </SignedOut>
+
             </div>
         </header>
   );
