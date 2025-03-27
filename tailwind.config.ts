@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-import { Config } from 'tailwindcss';
 import daisyui from 'daisyui';
 import { withUt } from 'uploadthing/tw';
 
