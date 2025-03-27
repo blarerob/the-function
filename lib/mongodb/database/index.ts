@@ -1,15 +1,19 @@
 import mongoose from 'mongoose';
 
-const connectToDatabase = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log('Connected to MongoDB');
-    } catch (error) {
-        console.error('Error connecting to MongoDB:', error);
-    }
-};
+const MONGODB_URI = process.env.MONGODB_URI;
 
-connectToDatabase().then(r => console.log(r,'Database connection successful')).catch(err => console.error('Database connection error:', err));
+const cached: { conn: mongoose.Connection | null, promise: Promise<mongoose.Connection> | null } = { conn: null, promise: null };
+export const connectToDatabase = async () => {
+    if (cached.conn) return cached.conn;
+
+    if(!MONGODB_URI) throw new Error('MONGODB_URI is missing');
+
+cached.promise = mongoose.connect(MONGODB_URI, {
+    dbName: 'jtown-events',
+    bufferCommands: false,
+}).then((mongooseInstance) => mongooseInstance.connection);
+
+    cached.conn = await cached.promise;
+
+    return cached.conn;
+}
