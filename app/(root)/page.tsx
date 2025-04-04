@@ -1,7 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
+import Collection from "@/components/shared/Collection";
+import {getAllEvents} from "@/lib/actions/event.actions";
 
-export default function Home() {
+export default async function Home() {
+
+    const events = await getAllEvents({
+        query: '',
+        category: '',
+        page: 1,
+        limit: 6,
+
+    })
+    console.log(events ? events : 'N/A');
+
         return(
             <>
                 <section className='bg-gray-800 bg-dotted-pattern bg-contain py-5 md:py-10 overflow-hidden'>
@@ -12,7 +24,7 @@ export default function Home() {
                             </h1>
                             <p className='p-regular-20 md:p-regular-24'>
                                 Discover and explore events happening in J-Town. Browse through a list of events and find
-                                one just for you and/or your family. Connect with people and celebrate with them.
+                                one just for you and/or your family. Connect with people and come celebrate!
                             </p>
                             <button className='btn btn-md btn-jtown w-full sm:w-fit'>
                                 <Link href='#events'>
@@ -30,12 +42,22 @@ export default function Home() {
                 </section>
 
                 <section id='events' className='wrapper my-8 flex flex-col gap-2 md:gap-6 overflow-hidden'>
-                    <h2 className='h2-bold'>Tusted by <br/> Thousands of Events</h2>
+                    <h2 className='text-xl bold'>Trusted by <br/> Thousands of Events</h2>
 
                     <div className='flex w-full flex-col gap-2 md:flex-row'>
                         Search
                         Category Filter
                     </div>
+
+                    <Collection
+                        data={events?.data}
+                        emptyTitle='No events found'
+                        emptyStateSubtext='Check back later for more events'
+                        collectionType='All_Events'
+                        limit={6}
+                        page={1}
+                        totalPages={2}
+                    />
                 </section>
             </>
         )

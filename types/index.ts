@@ -18,6 +18,8 @@ export type UpdateUserParams = {
 // ====== EVENT PARAMS
 export type CreateEventParams = {
     userId: string
+    firstName: string
+    lastName: string
     event: {
         title: string
         description: string
@@ -47,6 +49,8 @@ export type UpdateEventParams = {
         price: string
         isFree: boolean
         url: string
+        firstName: string
+        lastName: string
     }
     path: string
 }
@@ -71,6 +75,7 @@ export type GetEventsByUserParams = {
 
 export type GetRelatedEventsByCategoryParams = {
     categoryId: string
+    categoryNameId: string
     eventId: string
     limit?: number
     page: number | string
