@@ -18,9 +18,6 @@ const Collection = ({
     emptyTitle,
     emptyStateSubtext,
     collectionType,
-    page,
-    totalPages = 0,
-    urlParamName,
 }: CollectionProps) => {
   return (
     <>

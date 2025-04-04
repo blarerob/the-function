@@ -16,16 +16,17 @@ import {
     GetEventsByUserParams,
     GetRelatedEventsByCategoryParams,
 } from '@/types'
+import mongoose from "mongoose";
 
 
 const getCategoryByName = async (name: string) => {
     return Category.findOne({ name: { $regex: name, $options: 'i' } })
 }
 
-const populateEvent = (query: any) => {
-    return query
+const populateEvent = ({ query }: { query: mongoose.Query<any, any> }) =>
+{const populateEvent = ({ query }: { query: mongoose.Query<unknown, unknown> }) => {    return query
         .populate({ path: 'organizer', model: User, select: '_id firstName lastName' })
-        .populate({ path: 'category', model: Category, select: '_id name' })
+        .populate({ path: 'category', model: Category, select: '_id name' });
 }
 
 // CREATE
@@ -49,7 +50,7 @@ export async function getEventById(eventId: string) {
     try {
         await connectToDatabase()
 
-        const event = await populateEvent(Event.findById(eventId))
+        const event = await populateEvent({query: Event.findById(eventId)})
 
         if (!event) throw new Error('Event not found')
 
@@ -116,15 +117,17 @@ export async function getAllEvents({ query, limit = 6, page, category }: GetAllE
         const categoryCondition = category ? await getCategoryByName(category) : null
         const conditions = {
             $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
-        }
+        };
 
-        const skipAmount = (Number(page) - 1) * limit
+        const skipAmount = limit * (Number(page) - 1);
+
+        console.log(skipAmount)
         const eventsQuery = Event.find(conditions)
             .sort({ createdAt: 'desc' })
             .skip(0)
             .limit(limit)
 
-        const events = await populateEvent(eventsQuery)
+        const events = await populateEvent({query: eventsQuery})
         const eventsCount = await Event.countDocuments(conditions)
 
         return {
@@ -149,7 +152,7 @@ export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUs
             .skip(skipAmount)
             .limit(limit)
 
-        const events = await populateEvent(eventsQuery)
+        const events = await populateEvent({query: eventsQuery})
         const eventsCount = await Event.countDocuments(conditions)
 
         return { data: JSON.parse(JSON.stringify(events)), totalPages: Math.ceil(eventsCount / limit) }
@@ -176,7 +179,7 @@ export async function getRelatedEventsByCategory({
             .skip(skipAmount)
             .limit(limit)
 
-        const events = await populateEvent(eventsQuery)
+        const events = await populateEvent({query: eventsQuery})
         const eventsCount = await Event.countDocuments(conditions)
 
         return { data: JSON.parse(JSON.stringify(events)), totalPages: Math.ceil(eventsCount / limit) }

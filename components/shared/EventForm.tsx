@@ -22,7 +22,6 @@ import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import Link from 'next/link';
 import { IEvent } from "@/lib/database/models/event.model"
 import {Textarea} from "@/components/ui/textarea";
-import {CreateEventParams} from "@/types";
 
 type EventFormProps = {
     userId: string

@@ -5,7 +5,6 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDropzone } from 'react-dropzone';
 import Alert from '@mui/material/Alert';
-import input from '@mui/material/Input';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -28,9 +27,11 @@ type FileUploaderProps = {
 
 const convertFileToUrl = (file: File): string => URL.createObjectURL(file);
 
-export const FileUploader = ({ setFiles, onFieldChange, imageUrl }: FileUploaderProps) => {
+export const FileUploader = ({ setFiles, onFieldChange}: FileUploaderProps) => {
     const [loading, setLoading] = useState(false);
     const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+
+    console.log(loading)
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         if (acceptedFiles && acceptedFiles.length > 0) {
