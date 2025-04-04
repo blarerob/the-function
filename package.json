@@ -33,6 +33,7 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@shadcn/ui": "^0.0.4",
     "@stripe/stripe-js": "^6.1.0",
+    "@uploadthing/react": "^7.3.0",
     "add": "^2.0.6",
     "auth": "^1.2.3",
     "class-variance-authority": "^0.7.1",
