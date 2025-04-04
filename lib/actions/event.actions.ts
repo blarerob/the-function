@@ -1,12 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-
 import { connectToDatabase } from '@/lib/database'
 import Event from '@/lib/database/models/event.model'
 import User from '@/lib/database/models/user.model'
 import Category from '@/lib/database/models/category.model'
 import { handleError } from '@/lib/utils'
+import mongoose from "mongoose"
 
 import {
     CreateEventParams,
@@ -16,41 +16,39 @@ import {
     GetEventsByUserParams,
     GetRelatedEventsByCategoryParams,
 } from '@/types'
-import mongoose from "mongoose";
-
 
 const getCategoryByName = async (name: string) => {
     return Category.findOne({ name: { $regex: name, $options: 'i' } })
 }
 
-const populateEvent = ({ query }: { query: mongoose.Query<any, any> }) =>
-{const populateEvent = ({ query }: { query: mongoose.Query<unknown, unknown> }) => {    return query
+const populateEvent = ({ query }: { query: mongoose.Query<unknown, unknown> }) => {
+    return query
         .populate({ path: 'organizer', model: User, select: '_id firstName lastName' })
-        .populate({ path: 'category', model: Category, select: '_id name' });
+        .populate({ path: 'category', model: Category, select: '_id name' })
 }
 
 // CREATE
-export async function createEvent({ userId, event, path }: CreateEventParams) {
+const createEvent = async ({ userId, event, path }: CreateEventParams) => {
     try {
         await connectToDatabase()
 
-        const newEvent = await Event.create({ ...event, category: event.categoryId, organizer: userId });
-        console.log('New Event Created:', newEvent);
-        revalidatePath(path);
+        const newEvent = await Event.create({ ...event, category: event.categoryId, organizer: userId })
+        console.log('New Event Created:', newEvent)
+        revalidatePath(path)
 
-        return JSON.parse(JSON.stringify(newEvent));
+        return JSON.parse(JSON.stringify(newEvent))
     } catch (error) {
-        console.error('Error creating event:', error);
-        handleError(error);
+        console.error('Error creating event:', error)
+        handleError(error)
     }
 }
 
 // GET ONE EVENT BY ID
-export async function getEventById(eventId: string) {
+const getEventById = async (eventId: string) => {
     try {
         await connectToDatabase()
 
-        const event = await populateEvent({query: Event.findById(eventId)})
+        const event = await populateEvent({ query: Event.findById(eventId) })
 
         if (!event) throw new Error('Event not found')
 
@@ -61,43 +59,38 @@ export async function getEventById(eventId: string) {
 }
 
 // UPDATE
-export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+const updateEvent = async ({ userId, event, path }: UpdateEventParams) => {
     try {
-        await connectToDatabase();
+        await connectToDatabase()
 
-        console.log('Updating event:', event);
-        const eventToUpdate = await Event.findById(event._id);
+        console.log('Updating event:', event)
+        const eventToUpdate = await Event.findById(event._id)
         if (!eventToUpdate) {
-            console.error('Event not found:', event._id);
-            throw new Error('Event not found');
+            console.error('Event not found:', event._id)
+            throw new Error('Event not found')
         }
 
-        console.log('Event organizer:', eventToUpdate.organizer);
-        console.log('User ID:', userId);
-
-       /* if (!eventToUpdate.organizer || eventToUpdate.organizer.toHexString() !== userId) {
-            console.error('Unauthorized access by user:', userId);
-            throw new Error('Unauthorized');
-        }*/
+        console.log('Event organizer:', eventToUpdate.organizer)
+        console.log('User ID:', userId)
 
         const updatedEvent = await Event.findByIdAndUpdate(
             event._id,
             { ...event, category: event.categoryId },
             { new: true }
-        );
-        console.log('Event updated successfully:', updatedEvent);
+        )
+        console.log('Event updated successfully:', updatedEvent)
 
-        revalidatePath(path);
+        revalidatePath(path)
 
-        return JSON.parse(JSON.stringify(updatedEvent));
+        return JSON.parse(JSON.stringify(updatedEvent))
     } catch (error) {
-        console.error('Error updating event:', error);
-        handleError(error);
+        console.error('Error updating event:', error)
+        handleError(error)
     }
 }
 
 // DELETE
-export async function deleteEvent({ eventId, path }: DeleteEventParams) {
+const deleteEvent = async ({ eventId, path }: DeleteEventParams) => {
     try {
         await connectToDatabase()
 
@@ -109,7 +102,7 @@ export async function deleteEvent({ eventId, path }: DeleteEventParams) {
 }
 
 // GET ALL EVENTS
-export async function getAllEvents({ query, limit = 6, page, category }: GetAllEventsParams) {
+const getAllEvents = async ({ query, limit = 6, page, category }: GetAllEventsParams) => {
     try {
         await connectToDatabase()
 
@@ -117,17 +110,17 @@ export async function getAllEvents({ query, limit = 6, page, category }: GetAllE
         const categoryCondition = category ? await getCategoryByName(category) : null
         const conditions = {
             $and: [titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
-        };
+        }
 
-        const skipAmount = limit * (Number(page) - 1);
+        const skipAmount = limit * (Number(page) - 1)
 
         console.log(skipAmount)
         const eventsQuery = Event.find(conditions)
             .sort({ createdAt: 'desc' })
-            .skip(0)
+            .skip(skipAmount)
             .limit(limit)
 
-        const events = await populateEvent({query: eventsQuery})
+        const events = await populateEvent({ query: eventsQuery })
         const eventsCount = await Event.countDocuments(conditions)
 
         return {
@@ -140,7 +133,7 @@ export async function getAllEvents({ query, limit = 6, page, category }: GetAllE
 }
 
 // GET EVENTS BY ORGANIZER
-export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUserParams) {
+const getEventsByUser = async ({ userId, limit = 6, page }: GetEventsByUserParams) => {
     try {
         await connectToDatabase()
 
@@ -152,7 +145,7 @@ export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUs
             .skip(skipAmount)
             .limit(limit)
 
-        const events = await populateEvent({query: eventsQuery})
+        const events = await populateEvent({ query: eventsQuery })
         const eventsCount = await Event.countDocuments(conditions)
 
         return { data: JSON.parse(JSON.stringify(events)), totalPages: Math.ceil(eventsCount / limit) }
@@ -162,12 +155,12 @@ export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUs
 }
 
 // GET RELATED EVENTS: EVENTS WITH SAME CATEGORY
-export async function getRelatedEventsByCategory({
-     categoryId,
-     eventId,
-     limit = 3,
-     page = 1,
- }: GetRelatedEventsByCategoryParams) {
+const getRelatedEventsByCategory = async ({
+    categoryId,
+    eventId,
+    limit = 3,
+    page = 1,
+}: GetRelatedEventsByCategoryParams) => {
     try {
         await connectToDatabase()
 
@@ -179,11 +172,21 @@ export async function getRelatedEventsByCategory({
             .skip(skipAmount)
             .limit(limit)
 
-        const events = await populateEvent({query: eventsQuery})
+        const events = await populateEvent({ query: eventsQuery })
         const eventsCount = await Event.countDocuments(conditions)
 
         return { data: JSON.parse(JSON.stringify(events)), totalPages: Math.ceil(eventsCount / limit) }
     } catch (error) {
         handleError(error)
     }
+}
+
+export {
+    createEvent,
+    getEventById,
+    updateEvent,
+    deleteEvent,
+    getAllEvents,
+    getEventsByUser,
+    getRelatedEventsByCategory,
 }
