@@ -1,3 +1,5 @@
+import PageProps from 'next';
+
 // ====== USER PARAMS
 export type CreateUserParams = {
     clerkId: string
@@ -148,7 +150,11 @@ export type RemoveUrlQueryParams = {
     keysToRemove: string[]
 }
 
-export type SearchParamProps = {
-    params: { id: string }
-    searchParams: { [key: string]: string | string[] | undefined }
+export interface SearchParamProps extends PageProps {
+    params: {
+        id: string;
+    };
+    searchParams: {
+        page?: string;
+    };
 }
