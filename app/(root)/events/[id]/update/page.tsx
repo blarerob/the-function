@@ -3,9 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import { getEventById } from "@/lib/actions/event.actions";
 
 type UpdateEventProps = {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
 const UpdateEventPage = async ({ params }: UpdateEventProps) => {
