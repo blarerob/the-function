@@ -5,8 +5,8 @@ import CheckoutButton from "@/components/shared/CheckoutButton";
 import Collection from "@/components/shared/Collection";
 
 
-const EventDetails = async (id: string) => {
-  const event = await getEventById(id);
+const EventDetails = async () => {
+  const event = await getEventById("");
 
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,

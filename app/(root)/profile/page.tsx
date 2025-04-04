@@ -1,24 +1,27 @@
 import Collection from '@/components/shared/Collection'
 import { Button } from '@/components/ui/button'
 import { getEventsByUser } from '@/lib/actions/event.actions'
-import { getOrdersByUser} from "@/lib/actions/order.action";
+import { getOrdersByUser } from "@/lib/actions/order.action";
 import { IOrder } from '@/lib/database/models/order.model'
-import { SearchParamProps } from '@/types'
 import { auth } from '@clerk/nextjs/server'
 import Link from 'next/link'
 import React from 'react'
 
-const ProfilePage = async ({ searchParams }: SearchParamProps) => {
-    const { session } = auth();
-    const userId = session?.userId as string;
+const ProfilePage = async () => {
+    const { userId } = await auth();
 
-    const ordersPage = Number(searchParams?.ordersPage) || 1;
-    const eventsPage = Number (searchParams?.eventsPage) || 1;
+    if (!userId) {
+        // Handle the case where userId is not available
+        return <div>User not authenticated</div>;
+    }
 
-    const orders = await getOrdersByUser({ userId, page: ordersPage})
+    const ordersPage = Number() || 1;
+    const eventsPage = Number() || 1;
+
+    const orders = await getOrdersByUser({ userId, page: ordersPage });
 
     const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-    const organizedEvents = await getEventsByUser({ userId, page: eventsPage })
+    const organizedEvents = await getEventsByUser({ userId, page: eventsPage });
 
     return (
         <>

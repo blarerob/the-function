@@ -1,10 +1,14 @@
 import EventForm from "@/components/shared/EventForm"
 import {auth} from "@clerk/nextjs/server";
+import React from "react";
 
-const CreateEvent = () => {
-    const { session } = auth();
+const CreateEvent = async () => {
+    const { userId } = await auth();
 
-    const userId = session?.userId as string;
+    if (!userId) {
+        // Handle the case where userId is not available
+        return <div>User not authenticated</div>;
+    }
 
     console.log(userId);
 
