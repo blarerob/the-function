@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose'
+import mongoose, { model, models, Document } from 'mongoose'
 
 export interface IOrder extends Document {
     createdAt: Date
@@ -24,7 +24,7 @@ export type IOrderItem = {
     buyer: string
 }
 
-const OrderSchema = new Schema({
+const OrderSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
@@ -38,15 +38,17 @@ const OrderSchema = new Schema({
         type: String,
     },
     event: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
+        required: true
     },
     buyer: {
-        type: Schema.Types.ObjectId,
+        type: String,
+        required: true,
         ref: 'User',
     },
 })
 
 const Order = models.Order || model('Order', OrderSchema)
 
-export default Order
+export default Order;

@@ -117,12 +117,25 @@ export async function getOrdersByEvent({ searchString, eventId }: GetOrdersByEve
 }
 
 // GET ORDERS BY USER
-export async function getOrdersByUser({ userId, limit = 3, page }: GetOrdersByUserParams) {
+export async function getOrdersByUser({ firstName, limit = 3, page }: GetOrdersByUserParams) {
     try {
         await connectToDatabase()
 
+      /*  if (typeof userId !== 'string' || userId.trim() === '') {
+            console.error(`Invalid user ID: ${userId}`);
+            return { error: 'Invalid user ID provided' };
+        }
+
+// Optional: Validate against a specific format
+        const userIdRegex = /^[a-zA-Z0-9_-]{10,}$/; // Example: alphanumeric with underscores/dashes, min length 10
+        if (!userIdRegex.test(userId)) {
+            console.error(`Invalid user ID format: ${userId}`);
+            return { error: 'Invalid user ID format provided' };
+        }*/
+
+
         const skipAmount = (Number(page) - 1) * limit
-        const conditions = { buyer: userId }
+        const conditions = { buyer: firstName }
 
         const orders = await Order.distinct('event._id')
             .find(conditions)
