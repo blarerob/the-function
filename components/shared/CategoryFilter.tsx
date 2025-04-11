@@ -19,14 +19,16 @@ const CategoryFilter = () => {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        const getCategories = async () => {
+        const fetchCategories = async () => {
             const categoryList = await getAllCategories();
 
-            categoryList && setCategories(categoryList as ICategory[])
-        }
+            if (categoryList) {
+                setCategories(categoryList as ICategory[]);
+            }
+        };
 
-        getCategories();
-    }, [])
+        fetchCategories();
+    }, []);
 
     const onSelectCategory = (category: string) => {
         let newUrl = '';
