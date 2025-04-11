@@ -65,7 +65,7 @@ export type GetAllEventsParams = {
 
 export type GetEventsByUserParams = {
     firstName?: string | number | null
-    userId: string
+    userId?: string | null
     limit?: number
     page: number
 }

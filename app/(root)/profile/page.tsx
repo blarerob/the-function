@@ -3,12 +3,11 @@ import { Button } from '@/components/ui/button'
 import { getEventsByUser } from '@/lib/actions/event.actions'
 import { getOrdersByUser } from "@/lib/actions/order.action";
 import { IOrder } from '@/lib/database/models/order.model'
-import { auth } from '@clerk/nextjs/server'
 import Link from 'next/link'
 import React from 'react'
 
 const ProfilePage = async () => {
-    const firstName = (await auth()).userId;
+    let firstName;
 
     const ordersPage = Number() || 1;
     const eventsPage = Number() || 1;
@@ -16,7 +15,7 @@ const ProfilePage = async () => {
     const orders = await getOrdersByUser({ firstName, page: ordersPage });
 
     const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-    const organizedEvents = await getEventsByUser({userId: "", firstName, page: eventsPage });
+    const organizedEvents = await getEventsByUser({ firstName, page: eventsPage });
 
     return (
         <>
