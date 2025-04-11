@@ -8,15 +8,15 @@ import Link from 'next/link'
 import React from 'react'
 
 const ProfilePage = async () => {
-    const { firstName } = await auth();
+    const firstName = (await auth()).userId;
 
     const ordersPage = Number() || 1;
     const eventsPage = Number() || 1;
 
-    const orders = await getOrdersByUser({ page: ordersPage });
+    const orders = await getOrdersByUser({ firstName, page: ordersPage });
 
     const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-    const organizedEvents = await getEventsByUser({ firstName, page: eventsPage });
+    const organizedEvents = await getEventsByUser({userId: "", firstName, page: eventsPage });
 
     return (
         <>
