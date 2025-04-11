@@ -63,25 +63,29 @@ export async function getEventById(eventId: string) {
     }
 }
 // UPDATE
-export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+export async function updateEvent({event, path }: UpdateEventParams) {
     try {
-        await connectToDatabase()
+        await connectToDatabase();
 
-        const eventToUpdate = await Event.findById(event._id)
-        if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
-            throw new Error('Unauthorized or event not found')
+        const eventToUpdate = await Event.findById(event._id);
+        if (!eventToUpdate) {
+            throw new Error('Event not found');
         }
+
+        /*if (!eventToUpdate.organizer || eventToUpdate.organizer.toHexString() !== userId) {
+            throw new Error('Unauthorized');
+        }*/
 
         const updatedEvent = await Event.findByIdAndUpdate(
             event._id,
             { ...event, category: event.categoryId },
             { new: true }
-        )
-        revalidatePath(path)
+        );
+        revalidatePath(path);
 
-        return JSON.parse(JSON.stringify(updatedEvent))
+        return JSON.parse(JSON.stringify(updatedEvent));
     } catch (error) {
-        handleError(error)
+        handleError(error);
     }
 }
 
