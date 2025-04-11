@@ -11,9 +11,6 @@ interface Props {
 
 const EventDetails =  async ({ params, searchParams }: Props) => {
 
-  const { id } = await params;
-  console.log(id);
-
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
 
