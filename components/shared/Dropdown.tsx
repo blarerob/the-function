@@ -10,11 +10,16 @@ import { ICategory } from "@/lib/database/models/category.model";
 import { useState, useEffect, startTransition } from "react";
 import { createCategory, getAllCategories } from "@/lib/actions/category.actions";
 import { TextField } from "@mui/material";
+import {styled} from "@mui/material/styles";
 
 type DropdownProps = {
     value?: string;
     onChangeHandler?: (value: string | undefined) => void;
 };
+
+const Demo = styled('div')(({ theme }) => ({
+    backgroundColor: (theme.vars || theme).palette.background.paper,
+}));
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
     const [open, setOpen] = useState(false);
@@ -64,7 +69,8 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
             <Button onClick={handleClickOpen} className='w-full btn-jtown'>
                 {selectedName ? selectedName : 'Select Category'}
             </Button>
-            <Dialog defaultValue={value} onClose={() => handleClose(selectedValue)} open={open}>
+            <Dialog  defaultValue={value} onClose={() => handleClose(selectedValue)} open={open}>
+                <Demo>
                 <List sx={{ pt: 0 }}>
                     {categories.map((category) => (
                         <ListItemButton key={category._id} onClick={() => handleClose(category._id)}>
@@ -85,6 +91,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
                        />
                    </ListItem>
                 </List>
+                </Demo>
             </Dialog>
         </div>
     );

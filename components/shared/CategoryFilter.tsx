@@ -12,6 +12,7 @@ import { ICategory } from "@/lib/database/models/category.model";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import FormControl from '@mui/material/FormControl';
 
 const CategoryFilter = () => {
     const [categories, setCategories] = useState<ICategory[]>([]);
@@ -50,10 +51,12 @@ const CategoryFilter = () => {
     }
 
     return (
+
         <Select onValueChange={(value: string) => onSelectCategory(value)}>
             <SelectTrigger className="select-field">
                 <SelectValue placeholder="Category" />
             </SelectTrigger>
+            <FormControl sx={{ m: 1, minWidth: 80, backgroundColor: "white" }}>
             <SelectContent>
                 <SelectItem value="All" className="select-item p-regular-14">All</SelectItem>
 
@@ -63,7 +66,9 @@ const CategoryFilter = () => {
                     </SelectItem>
                 ))}
             </SelectContent>
+            </FormControl>
         </Select>
+
     )
 }
 
