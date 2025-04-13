@@ -18,7 +18,7 @@ type DropdownProps = {
 };
 
 const Demo = styled('div')(({ theme }) => ({
-    backgroundColor: (theme.vars || theme).palette.background.paper,
+    backgroundColor: (theme || theme).palette.background.paper,
 }));
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
