@@ -23,6 +23,7 @@ export type IOrderItem = {
     eventId: string
     buyer: string
     status: string;
+    firstName: string;
 }
 
 const OrderSchema = new mongoose.Schema({

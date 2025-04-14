@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
-import { updateOrderStatus } from '@/lib/actions/order.actions';
+import {createOrder, updateOrderStatus} from '@/lib/actions/order.actions';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2025-03-31.basil',
@@ -32,7 +32,11 @@ export async function POST(request: Request) {
         const amount = paymentIntent.amount / 100;
         const metadata = session.metadata; // Contains custom data like eventId
 
-        // Use metadata to update event details or grant access
+       // Call createOrder to save the order in MongoDB
+       if (metadata?.eventId && metadata?.buyerId) {
+           await createOrder();
+       }
+
        // Use metadata to identify the order in the database
        const orderId = metadata?.orderId; // Assuming orderId is stored in metadata
        if (orderId) {

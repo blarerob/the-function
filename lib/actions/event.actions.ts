@@ -131,11 +131,11 @@ export async function getAllEvents({ query, limit = 6, page, category }: GetAllE
 }
 
 // GET EVENTS BY ORGANIZER
-export async function getEventsByUser({ firstName, limit = 6, page }: GetEventsByUserParams) {
+export async function getEventsByUser({ email, limit = 6, page }: GetEventsByUserParams) {
     try {
         await connectToDatabase()
 
-        const conditions = { organizer: firstName }
+        const conditions = { organizer: email }
         const skipAmount = (page - 1) * limit
 
         const eventsQuery = Event.find(conditions)

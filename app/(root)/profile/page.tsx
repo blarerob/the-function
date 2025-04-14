@@ -7,11 +7,14 @@ import Link from 'next/link'
 import React from 'react'
 
 const ProfilePage = async () => {
-    let firstName;
+ // const email = "brobinson@jackhenry.com".split("@")[0]; // Extract only the letters portion before the '@'
 
-    // Fetch orders as IOrderItem
+   // Fetch orders as IOrderItem
+    let firstName;
     const orders = await getOrdersByUser({ firstName, page: 1 });
-    console.log("Orders:", orders);
+    console.log("Orders:", firstName);
+
+   console.log("Orders:", orders);
 
     // Map IOrderItem to extract event details
     const orderedEvents = orders?.data.map((order: IOrderItem) => ({
@@ -19,6 +22,7 @@ const ProfilePage = async () => {
         title: order.eventTitle,
     })) || [];
     console.log("Ordered Events:", orderedEvents);
+
     const organizedEvents = await getEventsByUser({ firstName, page: 1 });
     console.log({orderedEvents});
 

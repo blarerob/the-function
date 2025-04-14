@@ -64,6 +64,7 @@ export type GetAllEventsParams = {
 }
 
 export type GetEventsByUserParams = {
+    email?: string | number | null
     firstName?: string | number | null
     userId?: string | null
     limit?: number
@@ -128,6 +129,7 @@ export type GetOrdersByEventParams = {
 
 export type GetOrdersByUserParams = {
     firstName?: string | number | null
+    email?: string | number | null
     userId?: string | null
     limit?: number
     page: string | number | null
