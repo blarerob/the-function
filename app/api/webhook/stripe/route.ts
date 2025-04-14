@@ -44,9 +44,9 @@ export async function POST(request: Request) {
            });
 
            console.log('Order updated:', updatedOrder);
-       }
 
-        return NextResponse.json({ message: 'Charge succeeded', order: updatedOrder });
+           return NextResponse.json({ message: 'Charge succeeded', order: updatedOrder });
+       }
     }
 
     return new Response('', { status: 200 });
