@@ -2,21 +2,26 @@ import Collection from '@/components/shared/Collection'
 import { Button } from '@/components/ui/button'
 import { getEventsByUser } from '@/lib/actions/event.actions'
 import { getOrdersByUser } from "@/lib/actions/order.actions";
-import { IOrder } from '@/lib/database/models/order.model'
+import { IOrderItem } from '@/lib/database/models/order.model'
 import Link from 'next/link'
 import React from 'react'
 
 const ProfilePage = async () => {
     let firstName;
 
+    // Fetch orders as IOrderItem
     const orders = await getOrdersByUser({ firstName, page: 1 });
     console.log("Orders:", orders);
 
-    const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-    console.log("Orders Data:", orders?.data);
+    // Map IOrderItem to extract event details
+    const orderedEvents = orders?.data.map((order: IOrderItem) => ({
+        id: order.eventId,
+        title: order.eventTitle,
+    })) || [];
     console.log("Ordered Events:", orderedEvents);
     const organizedEvents = await getEventsByUser({ firstName, page: 1 });
     console.log({orderedEvents});
+
     return (
         <>
             {/* My Tickets */}
@@ -31,7 +36,7 @@ const ProfilePage = async () => {
                 </div>
             </section>
 
-           <section className="wrapper my-8">
+            <section className="wrapper my-8">
                 <Collection
                     data={orderedEvents}
                     emptyTitle="No event tickets purchased yet"
@@ -40,7 +45,7 @@ const ProfilePage = async () => {
                     limit={3}
                     page={1}
                     urlParamName="ordersPage"
-                    totalPages={2}
+                    totalPages={orders?.totalPages}
                 />
             </section>
 

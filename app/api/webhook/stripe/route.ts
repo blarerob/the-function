@@ -22,26 +22,29 @@ export async function POST(request: Request) {
 
     const eventType = event.type;
 
-    if (eventType === 'checkout.session.completed') {
+   if (eventType === 'checkout.session.completed') {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        // Retrieve the PaymentIntent to get the amount
+        // Retrieve the PaymentIntent
         const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
 
-        const charge = paymentIntent.latest_charge; // Access the first charge
-        console.log('charge:', charge);
-        const chargeId = paymentIntent.id; // Get the charge ID
-        const amount = paymentIntent.amount / 100; // Convert amount to dollars
-        const metadata = session.metadata; // Metadata sent during session creation
+        const chargeId = paymentIntent.id;
+        const amount = paymentIntent.amount / 100;
+        const metadata = session.metadata; // Contains custom data like eventId
 
-        console.log('Charge succeeded:', chargeId, amount, metadata);
+        // Use metadata to update event details or grant access
+       // Use metadata to identify the order in the database
+       const orderId = metadata?.orderId; // Assuming orderId is stored in metadata
+       if (orderId) {
+           // Update the order in MongoDB
+           const updatedOrder = await updateOrderStatus({
+               stripeId: chargeId,
+               status: 'paid',
+               amount,
+           });
 
-        // Update the database to mark the order as paid
-        const updatedOrder = await updateOrderStatus({
-            stripeId: chargeId,
-            status: 'paid',
-            amount,
-        });
+           console.log('Order updated:', updatedOrder);
+       }
 
         return NextResponse.json({ message: 'Charge succeeded', order: updatedOrder });
     }
