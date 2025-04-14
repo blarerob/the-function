@@ -54,7 +54,7 @@
     "react-hook-form": "^7.55.0",
     "shadcn": "^2.4.0-canary.17",
     "shadcn-ui": "^0.9.5",
-    "stripe": "^17.7.0",
+    "stripe": "^18.0.0",
     "svix": "^1.62.0",
     "tailwind-merge": "^3.0.2",
     "uploadthing": "^7.5.2",

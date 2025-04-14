@@ -9,14 +9,14 @@ import React from 'react'
 const ProfilePage = async () => {
     let firstName;
 
-    const ordersPage = Number() || 1;
-    const eventsPage = Number() || 1;
-
-    const orders = await getOrdersByUser({ firstName, page: ordersPage });
+    const orders = await getOrdersByUser({ firstName, page: 1 });
+    console.log("Orders:", orders);
 
     const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-    const organizedEvents = await getEventsByUser({ firstName, page: eventsPage });
-
+    console.log("Orders Data:", orders?.data);
+    console.log("Ordered Events:", orderedEvents);
+    const organizedEvents = await getEventsByUser({ firstName, page: 1 });
+    console.log({orderedEvents});
     return (
         <>
             {/* My Tickets */}
@@ -38,9 +38,9 @@ const ProfilePage = async () => {
                     emptyStateSubtext="No worries - plenty of exciting events to explore!"
                     collectionType="My_Tickets"
                     limit={3}
-                    page={ordersPage}
+                    page={1}
                     urlParamName="ordersPage"
-                    totalPages={orders?.totalPages}
+                    totalPages={2}
                 />
             </section>
 
@@ -62,7 +62,7 @@ const ProfilePage = async () => {
                     emptyStateSubtext="Go create some now"
                     collectionType="Events_Organized"
                     limit={3}
-                    page={eventsPage}
+                    page={1}
                     urlParamName="eventsPage"
                     totalPages={organizedEvents?.totalPages}
                 />
