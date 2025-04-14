@@ -159,3 +159,20 @@ export async function getOrdersByUser({ firstName, limit = 3, page }: GetOrdersB
         handleError(error)
     }
 }
+
+export async function updateOrderStatus({ stripeId, status, amount }: { stripeId: string; status: string; amount: number }) {
+    try {
+        await connectToDatabase();
+
+        const updatedOrder = await Order.findOneAndUpdate(
+            { stripeId },
+            { status, totalAmount: amount },
+            { new: true }
+        );
+
+        return updatedOrder;
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        throw error;
+    }
+}

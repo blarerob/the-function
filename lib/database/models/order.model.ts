@@ -22,6 +22,7 @@ export type IOrderItem = {
     eventTitle: string
     eventId: string
     buyer: string
+    status: string;
 }
 
 const OrderSchema = new mongoose.Schema({
@@ -40,14 +41,14 @@ const OrderSchema = new mongoose.Schema({
     event: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
-        required: true
+        required: true,
     },
     buyer: {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
     },
-})
+});
 
 const Order = models.Order || model('Order', OrderSchema)
 

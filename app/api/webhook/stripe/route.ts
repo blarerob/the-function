@@ -1,39 +1,50 @@
-import stripe from 'stripe'
-import { NextResponse } from 'next/server'
-import { createOrder } from '@/lib/actions/order.actions'
+import Stripe from 'stripe';
+import { NextResponse } from 'next/server';
+import { updateOrderStatus } from '@/lib/actions/order.actions';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-03-31.basil',
+});
 
 export async function POST(request: Request) {
-    const body = await request.text()
+    const body = await request.text();
 
-    const sig = request.headers.get('stripe-signature') as string
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
+    const sig = request.headers.get('stripe-signature') as string;
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
-    let event
+    let event;
 
     try {
-        event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
+        event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
     } catch (err) {
-        return NextResponse.json({ message: 'Webhook error', error: err })
+        return NextResponse.json({ message: 'Webhook error', error: err });
     }
 
-    // Get the ID and type
-    const eventType = event.type
+    const eventType = event.type;
 
-    // CREATE
     if (eventType === 'checkout.session.completed') {
-        const { id, amount_total, metadata } = event.data.object
+        const session = event.data.object as Stripe.Checkout.Session;
 
-        const order = {
-            stripeId: id,
-            eventId: metadata?.eventId || '',
-            buyerId: metadata?.buyerId || '',
-            totalAmount: amount_total ? (amount_total / 100).toString() : '0',
-            createdAt: new Date(),
-        }
+        // Retrieve the PaymentIntent to get the amount
+        const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
 
-        const newOrder = await createOrder(order)
-        return NextResponse.json({ message: 'OK', order: newOrder })
+        const charge = paymentIntent.latest_charge; // Access the first charge
+        console.log('charge:', charge);
+        const chargeId = paymentIntent.id; // Get the charge ID
+        const amount = paymentIntent.amount / 100; // Convert amount to dollars
+        const metadata = session.metadata; // Metadata sent during session creation
+
+        console.log('Charge succeeded:', chargeId, amount, metadata);
+
+        // Update the database to mark the order as paid
+        const updatedOrder = await updateOrderStatus({
+            stripeId: chargeId,
+            status: 'paid',
+            amount,
+        });
+
+        return NextResponse.json({ message: 'Charge succeeded', order: updatedOrder });
     }
 
-    return new Response('', { status: 200 })
+    return new Response('', { status: 200 });
 }
