@@ -1,16 +1,27 @@
 import Search  from '@/components/shared/Search'
 import { getOrdersByEvent } from '@/lib/actions/order.actions'
 import { formatDateTime, formatPrice } from '@/lib/utils'
-import {GetOrdersByEventParams, SearchParamProps} from '@/types'
 import { IOrderItem } from '@/lib/database/models/order.model'
 
-const Orders = async ({ searchParams }: SearchParamProps) => {
-    const resolvedSearchParams = await searchParams;
-    const eventId = resolvedSearchParams?.eventId || '';
-    const searchText = resolvedSearchParams?.query || '';
+interface Props {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ eventId: string; searchText: string; category: string }>;
+}
 
-    const orders = await getOrdersByEvent({eventId, searchString: searchText} as GetOrdersByEventParams);
+const Orders = async ({ searchParams }: Props) => {
+    const awaitedSearchParams = await searchParams;
+
+    const eventId = Array.isArray(awaitedSearchParams.eventId)
+        ? awaitedSearchParams.eventId.join(',') // Convert array to a comma-separated string
+        : awaitedSearchParams.eventId || ''; // Use the string value or fallback to an empty string
+
+    const searchText = Array.isArray(awaitedSearchParams.searchText)
+        ? awaitedSearchParams.searchText.join(',') // Convert array to a comma-separated string
+        : awaitedSearchParams.searchText || ''; // Use the string value or fallback to an empty string
+
+    const orders = await getOrdersByEvent({ eventId, searchString: searchText });
     console.log(orders);
+
     return (
         <>
             <section className=" bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">

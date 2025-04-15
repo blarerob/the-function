@@ -1,57 +1,39 @@
-import Stripe from 'stripe';
-import { NextResponse } from 'next/server';
-import {createOrder, updateOrderStatus} from '@/lib/actions/order.actions';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2025-03-31.basil',
-});
+import stripe from 'stripe'
+import { NextResponse } from 'next/server'
+import { createOrder } from '@/lib/actions/order.actions'
 
 export async function POST(request: Request) {
-    const body = await request.text();
+    const body = await request.text()
 
-    const sig = request.headers.get('stripe-signature') as string;
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+    const sig = request.headers.get('stripe-signature') as string
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
-    let event;
+    let event
 
     try {
-        event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+        event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
     } catch (err) {
-        return NextResponse.json({ message: 'Webhook error', error: err });
+        return NextResponse.json({ message: 'Webhook error', error: err })
     }
 
-    const eventType = event.type;
+    // Get the ID and type
+    const eventType = event.type
 
-   if (eventType === 'checkout.session.completed') {
-        const session = event.data.object as Stripe.Checkout.Session;
+    // CREATE
+    if (eventType === 'checkout.session.completed') {
+        const { id, amount_total, metadata } = event.data.object
 
-        // Retrieve the PaymentIntent
-        const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent as string);
+        const order = {
+            stripeId: id,
+            eventId: metadata?.eventId || '',
+            buyerId: metadata?.buyerId || '',
+            totalAmount: amount_total ? (amount_total / 100).toString() : '0',
+            createdAt: new Date(),
+        }
 
-        const chargeId = paymentIntent.id;
-        const amount = paymentIntent.amount / 100;
-        const metadata = session.metadata; // Contains custom data like eventId
-
-       // Call createOrder to save the order in MongoDB
-       if (metadata?.eventId && metadata?.buyerId) {
-           await createOrder();
-       }
-
-       // Use metadata to identify the order in the database
-       const orderId = metadata?.orderId; // Assuming orderId is stored in metadata
-       if (orderId) {
-           // Update the order in MongoDB
-           const updatedOrder = await updateOrderStatus({
-               stripeId: chargeId,
-               status: 'paid',
-               amount,
-           });
-
-           console.log('Order updated:', updatedOrder);
-
-           return NextResponse.json({ message: 'Charge succeeded', order: updatedOrder });
-       }
+        const newOrder = await createOrder(order)
+        return NextResponse.json({ message: 'OK', order: newOrder })
     }
 
-    return new Response('', { status: 200 });
+    return new Response('', { status: 200 })
 }
