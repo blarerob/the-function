@@ -56,7 +56,7 @@ const CategoryFilter = () => {
             <SelectTrigger className="select-field">
                 <SelectValue placeholder="Category" />
             </SelectTrigger>
-            <FormControl sx={{ m: 1, minWidth: 80, backgroundColor: "white" }}>
+            <FormControl sx={{ m: 1, minWidth: 80 }}>
             <SelectContent>
                 <SelectItem value="All" className="select-item p-regular-14">All</SelectItem>
 

@@ -10,20 +10,18 @@ const ProfilePage = async () => {
  // const email = "brobinson@jackhenry.com".split("@")[0]; // Extract only the letters portion before the '@'
 
    // Fetch orders as IOrderItem
-    let firstName;
-    const orders = await getOrdersByUser({ firstName, page: 1 });
-    console.log("Orders:", firstName);
-
+    const orders = await getOrdersByUser({ page: 1 });
    console.log("Orders:", orders);
 
     // Map IOrderItem to extract event details
     const orderedEvents = orders?.data.map((order: IOrderItem) => ({
         id: order.eventId,
         title: order.eventTitle,
+        firstName: order.firstName,
     })) || [];
     console.log("Ordered Events:", orderedEvents);
 
-    const organizedEvents = await getEventsByUser({ firstName, page: 1 });
+    const organizedEvents = await getEventsByUser({ page: 1 });
     console.log({orderedEvents});
 
     return (

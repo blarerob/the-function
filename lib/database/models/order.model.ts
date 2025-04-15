@@ -15,7 +15,8 @@ export interface IOrder extends Document {
     }
 }
 
-export type IOrderItem = {
+export interface IOrderItem extends Document {
+    stripeId: string
     _id: string
     totalAmount: string
     createdAt: Date
