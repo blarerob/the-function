@@ -94,7 +94,7 @@ const EventDetails =  async ({ params, searchParams }: Props) => {
           <Collection
               data={relatedEvents?.data}
               emptyTitle="No Events Found"
-              emptyStateSubtext="Come back later"
+              emptyStateSubtext="Check back later"
               collectionType="All_Events"
               limit={3}
               page={resolvedSearchParams.page as string}

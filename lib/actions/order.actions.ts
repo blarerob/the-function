@@ -5,7 +5,7 @@ import { CheckoutOrderParams, CreateOrderParams, GetOrdersByEventParams, GetOrde
 import { redirect } from 'next/navigation';
 import { handleError } from '../utils';
 import { connectToDatabase } from '../database';
-import Order from '../database/models/order.model';
+import OrderModel from '../database/models/order.model';
 import Event from '../database/models/event.model';
 import {ObjectId} from 'mongodb';
 import User from '../database/models/user.model';
@@ -48,17 +48,21 @@ export const createOrder = async (order: CreateOrderParams) => {
     try {
         await connectToDatabase();
 
-        const newOrder = await Order.create({
-            ...order,
+        const newOrder = new OrderModel({
+            stripeId: order.stripeId,
             event: order.eventId,
             buyer: order.buyerId,
+            totalAmount: order.totalAmount,
+            createdAt: order.createdAt,
         });
 
+        await newOrder.save();
         return JSON.parse(JSON.stringify(newOrder));
     } catch (error) {
+        console.error('Error saving order:', error);
         handleError(error);
     }
-}
+};
 
 // GET ORDERS BY EVENT
 export async function getOrdersByEvent({ searchString, eventId }: GetOrdersByEventParams) {
@@ -68,7 +72,7 @@ export async function getOrdersByEvent({ searchString, eventId }: GetOrdersByEve
         if (!eventId) throw new Error('Event ID is required')
         const eventObjectId = new ObjectId(eventId)
 
-        const orders = await Order.aggregate([
+        const orders = await OrderModel.aggregate([
             {
                 $lookup: {
                     from: 'users',
@@ -124,7 +128,7 @@ export async function getOrdersByUser({ userId, limit = 3, page }: GetOrdersByUs
         const skipAmount = (Number(page) - 1) * limit
         const conditions = { buyer: userId }
 
-        const orders = await Order.distinct('event._id')
+        const orders = await OrderModel.distinct('event._id')
             .find(conditions)
             .sort({ createdAt: 'desc' })
             .skip(skipAmount)
@@ -139,7 +143,7 @@ export async function getOrdersByUser({ userId, limit = 3, page }: GetOrdersByUs
                 },
             })
 
-        const ordersCount = await Order.distinct('event._id').countDocuments(conditions)
+        const ordersCount = await OrderModel.distinct('event._id').countDocuments(conditions)
 
         return { data: JSON.parse(JSON.stringify(orders)), totalPages: Math.ceil(ordersCount / limit) }
     } catch (error) {

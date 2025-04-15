@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IOrder extends Document {
     createdAt: Date
@@ -24,7 +24,7 @@ export type IOrderItem = {
     buyer: string
 }
 
-const OrderSchema = new Schema({
+const OrderSchema = new Schema<IOrder>({
     createdAt: {
         type: Date,
         default: Date.now,
@@ -47,6 +47,8 @@ const OrderSchema = new Schema({
     },
 })
 
-const Order = models.Order || model('Order', OrderSchema)
+// Create a unique index on the stripeId field to ensure no duplicate orders
 
-export default Order
+const OrderModel = mongoose.model<IOrder>('Order', OrderSchema);
+
+export default OrderModel;

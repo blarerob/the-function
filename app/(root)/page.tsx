@@ -60,7 +60,7 @@ export default async function Home({ searchParams }: Props) {
                 <Collection
                     data={events?.data}
                     emptyTitle="No Events Found"
-                    emptyStateSubtext="Come back later"
+                    emptyStateSubtext="Check back later"
                     collectionType="All_Events"
                     limit={6}
                     page={page}
