@@ -41,6 +41,9 @@ body {
   border-radius: 5px; /* Rounded corners */
   cursor: pointer;
 }
+.filter-pink {
+  filter: grayscale(0%) brightness(95%) sepia(6) hue-rotate(-70deg) saturate(400%);
+}
 
 .jtown-datepicker {
   background-color: #4B0000; /* Maroon background color */
@@ -64,11 +67,31 @@ body {
   margin-bottom: 1rem; /* Adjust the value as needed */
 }
 
-
-
 /* Tailwind styles */
 @layer utilities {
   .wrapper {
     @apply max-w-7xl lg:mx-auto p-5 md:px-10 xl:px-0 w-full;
   }
+}
+
+/* Ballon menu styles */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+    color: #fff; /* Make the balloon (emoji) white */
+    /* For emoji color on supported browsers */
+    filter: brightness(0) invert(1);
+}
+
+.logo-animate-float {
+    animation: float 3s ease-in-out infinite;
+    cursor: default; /* Prevent cursor change */
 }

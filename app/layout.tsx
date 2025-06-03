@@ -11,10 +11,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-    title: "J-Town Events",
-    description: "Events being hosted around J-Town",
+    title: "The Functions",
+    description: "An event management platform for your next big party.",
     icons: {
-        icon: '/assets/images/jtown-district.jpg',
+        icon: '/functionsLogo.png',
     }
 };
 

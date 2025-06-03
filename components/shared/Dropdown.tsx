@@ -66,9 +66,24 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
 
     return (
         <div>
-            <Button onClick={handleClickOpen} className='w-full btn-jtown'>
-                {selectedName ? selectedName : 'Select Category'}
-            </Button>
+            <div className="flex flex-col gap-5 md:flex-row">
+             <Button
+                  onClick={handleClickOpen}
+                  className="input-field bg-white border-2 border-gray-300 focus:ring-gray-300 rounded-lg flex items-center justify-between hover:border-blue-500 hover:bg-white"
+              >
+                  <span className='text-gray-400 font-light'>{selectedName ? selectedName : 'Select Category'}</span>
+                  <svg
+                      className="ml-2 w-4 h-4 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                  >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+              </Button>
+            </div>
+
             <Dialog  defaultValue={value} onClose={() => handleClose(selectedValue)} open={open}>
                 <Demo>
                 <List sx={{ pt: 0 }}>
