@@ -48,6 +48,8 @@ export const createOrder = async (order: CreateOrderParams) => {
     try {
         await connectToDatabase();
 
+        console.log('Order data:', order); // Debugging log
+
         const newOrder = new OrderModel({
             stripeId: order.stripeId,
             event: order.eventId,
@@ -56,11 +58,14 @@ export const createOrder = async (order: CreateOrderParams) => {
             createdAt: order.createdAt,
         });
 
-        await newOrder.save();
-        return JSON.parse(JSON.stringify(newOrder));
+        const savedOrder = await newOrder.save();
+        console.log('Order saved successfully:', savedOrder); // Debugging log
+
+        return JSON.parse(JSON.stringify(savedOrder));
     } catch (error) {
         console.error('Error saving order:', error);
         handleError(error);
+        throw error; // Ensure the error is propagated
     }
 };
 

@@ -6,13 +6,13 @@ const Footer = () => {
   return (
     <footer className='border-t'>
       <div className='flex-center wrapper between flex flex-col
-      gap-4 p-5 text-center sm:flex-row'>
+       text-center sm:flex-row'>
           <Link href='/'>
               <Image
-                src='/assets/images/chargers-logo.png'
+                src='/functionsLogo.png'
                 alt='logo'
-                width={50}
-                height={50}
+                width={100}
+                height={100}
               />
           </Link>
           <p className='mt-2'>2025 Events. All Rights reserved</p>

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import mongoose from 'mongoose';
-import { connectToDatabase } from '@/lib/database'
+import {connectToDatabase} from '@/lib/database'
 import Event from '@/lib/database/models/event.model'
 import User from '@/lib/database/models/user.model'
 import Category from '@/lib/database/models/category.model'
@@ -23,19 +23,20 @@ const getCategoryByName = async (name: string) => {
 
 const populateEvent = (query: ReturnType<typeof Event.find>) => {
     return query
-        .populate({ path: 'organizer', model: User, select: '_id firstName lastName' })
+        .populate({ path: 'firstName', model: User, select: 'firstName' })
+        .populate({ path: 'lastName', model: User, select: 'lastName' })
         .populate({ path: 'category', model: Category, select: '_id name' });
 }
 
 // CREATE
-export async function createEvent({ userId, event, path }: CreateEventParams) {
+export async function createEvent({ event, path }: CreateEventParams) {
     try {
         await connectToDatabase()
 
-        const organizer = await User.findById(userId)
-        if (!organizer) throw new Error('Organizer not found')
+       /* const organizer = await User.findOne(firstName)
+        if (!organizer) throw new Error('Organizer not found')*/
 
-        const newEvent = await Event.create({ ...event, category: event.categoryId, organizer: userId })
+        const newEvent = await Event.create({ ...event, category: event.categoryId })
         revalidatePath(path)
 
         return JSON.parse(JSON.stringify(newEvent))
@@ -53,7 +54,10 @@ export async function getEventById(eventId: string) {
             throw new Error('Invalid event ID');
         }
 
-        const event = await Event.findById(eventId).populate('organizer', '_id firstName lastName').populate('category', '_id name');
+        const event = await Event.findById(eventId)
+            .populate({ path: 'firstName', model: User, select: 'firstName' })
+            .populate({ path: 'lastName', model: User, select: 'lastName' })
+            .populate({ path: 'category', model: Category, select: '_id name' })
 
         if (!event) throw new Error('Event not found');
 

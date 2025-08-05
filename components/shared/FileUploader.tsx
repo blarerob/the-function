@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDropzone } from 'react-dropzone';
 import Alert from '@mui/material/Alert';
+import Image from 'next/image';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -92,9 +93,11 @@ export const FileUploader = ({ setFiles, onFieldChange}: FileUploaderProps) => {
             {selectedImageUrl && (
                 <div>
                     <Alert severity="success" className='w-60 text-nowrap'>File uploaded successfully!</Alert>
-                    <img
+                    <Image
                         src={selectedImageUrl}
                         alt="Success"
+                        width={200}
+                        height={200}
                         style={{ maxWidth: '50%', height: '50%' }}
                         onLoad={() => setLoading(false)}
                         onError={(e) => {
